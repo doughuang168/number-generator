@@ -19,37 +19,41 @@ public class NumberGenerator {
 
     public static void main( String[] args ) throws IOException
     {
-        //don't want to hard-code distribution ,use a NavigableMap with the ceilingEntry method
-        int[] options = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
+	/* program iteration=997940 times selects one of n=20 elements with weights weights[i].
+	 * Selections are summed up in counter[i]. 
+	 */
+        List<String> generatedNums = new ArrayList<String>();
+        List<Integer> lineContainer = new ArrayList<Integer>();
+
         double maxWeight = 83000/997940d;
         double[] weights = new double[]{ maxWeight, maxWeight, maxWeight, maxWeight, maxWeight, maxWeight,
                                          maxWeight, maxWeight, maxWeight, maxWeight, maxWeight, maxWeight,
                                          1000/997940d, 500/997940d, 250/997940d, 100/997940d, 50/997940d,
                                          25/997940d, 10/997940d,5/997940d };
 
-        NavigableMap<Double, Integer> map = new TreeMap<Double, Integer>();
-        double totalWeight = 0d;
-        //assign a weight to a selection option.
-        for (int i = 0; i < weights.length; i++) {
-            totalWeight += weights[i];
-            map.put(totalWeight, options[i]);
-        }
-
-        //select from the weighted elements
-        Random rand = new Random();
-
         int iterations = 997940;
-
-        List<String> generatedNums = new ArrayList<String>();
-        List<Integer> lineContainer = new ArrayList<Integer>();
-        for(int i = 0; i < iterations; i++) {
-            double rnd = rand.nextDouble() * totalWeight;
-            Integer elem = (Integer)map.ceilingEntry(rnd).getValue();
-            if (elem == 20) {
-                lineContainer.add(i);
+        int n=20;
+        int [] counter = new int[n];
+        double max_weight=maxWeight;
+        int index=0;
+        boolean notaccepted;
+        for (int i=0; i<iterations; i++){
+            notaccepted=true;
+            while (notaccepted){
+                index= (int)(n*Math.random());
+                if(Math.random()<weights[index]/max_weight) {notaccepted=false;}
+            }
+            Integer line = (Integer) (i+1);
+            Integer elem = (Integer) (index+1);
+            if ((index+1) == 20) {
+                lineContainer.add(line);
             }
             generatedNums.add(elem.toString());
+            //counter[index]++;
         }
+//        for (int i=0; i<n; i++){
+//            System.out.println("counter["+i+"]="+counter[i]);
+//        }
 
         generateOutput(generatedNums);
         lineContainer.forEach(l -> {
